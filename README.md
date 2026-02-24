@@ -1,26 +1,26 @@
-# CG
+# CG (C Git)
 
-> C Git: um clone minimalista de Git escrito em C.
+> Um clone de Git em C, construido em camadas pequenas e verificaveis.
 
-![Language](https://img.shields.io/badge/language-C-00599C)
-![Status](https://img.shields.io/badge/status-MVP-orange)
-![Build](https://img.shields.io/badge/build-make-informational)
+![language](https://img.shields.io/badge/language-C-00599C)
+![stage](https://img.shields.io/badge/stage-MVP-orange)
+![build](https://img.shields.io/badge/build-make-informational)
 
-CG e um projeto focado em aprender e implementar o nucleo do Git passo a passo,
-com codigo simples, legivel e incremental.
+`CG` implementa os fundamentos do Git com foco em simplicidade de codigo,
+aprendizado de internals e evolucao incremental.
 
-## Features (MVP)
+## Estado Atual
 
+- [x] CLI basica (`cg --help`, `cg --version`)
 - [x] `cg init [diretorio]`
-- [x] Cria repositorio `.git` valido com:
+- [x] Inicializacao de repositorio `.git` valido com:
 - [x] `objects/`
 - [x] `refs/heads/`
 - [x] `refs/tags/`
-- [x] `HEAD`
-- [x] `config`
-- [x] `description`
+- [x] `HEAD` apontando para `refs/heads/main`
+- [x] `config` e `description`
 
-## Quick Start
+## Quickstart
 
 ```bash
 make
@@ -29,36 +29,69 @@ make
 ./cg init meu-projeto
 ```
 
-## Exemplo
+## Exemplo Real
 
 ```bash
 $ ./cg init demo
 Initialized empty CG repository in /.../demo/.git
+
+$ git -C demo rev-parse --is-inside-work-tree
+true
 ```
 
-## Estrutura
+## Arquitetura Inicial
+
+- `src/main.c`: parser de comandos e dispatch de subcomandos
+- helpers locais para:
+- criacao segura de diretorios
+- escrita de arquivos de metadata (`HEAD`, `config`, `description`)
+- composicao de caminhos com validacao de tamanho
+
+## Estrutura do Projeto
 
 ```text
 cg/
 |-- Makefile
 |-- README.md
+|-- .gitignore
 `-- src/
     `-- main.c
 ```
 
 ## Roadmap
 
-- [ ] `cg status` (arquivos rastreados e nao rastreados)
-- [ ] `cg add` (staging/index)
-- [ ] `cg commit` (objetos blob/tree/commit)
+### Fase 1: Inspecao do Working Tree
+
+- [ ] `cg status` (tracked, modified, untracked)
+- [ ] leitura basica de `.gitignore`
+
+### Fase 2: Area de Staging
+
+- [ ] `cg add <path>`
+- [ ] escrita e leitura do `index`
+
+### Fase 3: Historico
+
+- [ ] `cg commit -m "<msg>"`
+- [ ] criacao de objetos `blob`, `tree`, `commit`
+- [ ] atualizacao de `refs/heads/main`
 - [ ] `cg log`
+
+### Fase 4: Navegacao
+
 - [ ] `cg branch`
-- [ ] `cg checkout`
+- [ ] `cg checkout <branch|commit>`
 
-## Objetivo
+## Nao Objetivos (Agora)
 
-Construir um clone funcional de Git em C, com foco em:
+- rede (`clone`, `fetch`, `push`)
+- merge/rebase
+- compatibilidade total com todos os cantos do Git
 
-- internals do Git (objetos, refs, index e commits)
-- implementacao incremental e testavel
-- base didatica para estudos de sistemas e ferramentas de versao
+## Contribuicao
+
+Contribuicoes sao bem-vindas para:
+
+- novos subcomandos pequenos e bem testados
+- melhoria de mensagens de erro
+- testes de integracao por comando
